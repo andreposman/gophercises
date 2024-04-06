@@ -3,12 +3,11 @@ package _1_quiz
 import (
 	"bufio"
 	"fmt"
-	"os"
-	"strings"
-
 	"github.com/andreposman/gophercises/01-quiz/domain"
 	"github.com/andreposman/gophercises/pkg/utils"
 	"github.com/rs/zerolog/log"
+	"os"
+	"strings"
 )
 
 type QuizCSV struct {
@@ -20,6 +19,8 @@ func Quiz() {
 	utils.PrintName("01", "Quiz Game")
 	filePath := "01-quiz/"
 	fileName := "prob.csv"
+	correctAnswers := 0
+	incorrectAnswers := 0
 
 	data, err := utils.ReadCSV(filePath, fileName)
 	if err != nil {
@@ -40,20 +41,35 @@ func Quiz() {
 			text = strings.Trim(text, "\n")
 
 			if text == quizData.Answer[i] {
-				fmt.Println("You are correct!")
+				correctAnswers++
 				if i == len(quizData.Question)-1 {
-					fmt.Println("------------------------------------------------")
-					fmt.Println("Congratulations! You reached the end.")
-					fmt.Println("------------------------------------------------")
+					printFinalMessage(correctAnswers, incorrectAnswers, quizData)
+					fmt.Println()
 					os.Exit(0)
 				}
 			} else {
-				fmt.Println("You are wrong! Try again")
-				break
+				incorrectAnswers++
+				if i == len(quizData.Question)-1 {
+					printFinalMessage(correctAnswers, incorrectAnswers, quizData)
+					fmt.Println()
+					os.Exit(0)
+				}
 			}
-
 		}
+
 	}
+
+}
+
+func printFinalMessage(correctAnswers, incorrectAnswers int, quizData domain.QuizCSV) {
+	fmt.Printf("\n\n------------------------------------------------------------------------------------------------\n")
+	if correctAnswers >= incorrectAnswers {
+		fmt.Printf("\n             Contratulations! You got %d/%d of the questions right!\n", correctAnswers, len(quizData.Question))
+	}
+	if correctAnswers < incorrectAnswers {
+		fmt.Printf("\n             Sorry! You only got %d/%d of the questions right.\n", correctAnswers, len(quizData.Question))
+	}
+	fmt.Printf("\n------------------------------------------------------------------------------------------------")
 
 }
 
@@ -68,7 +84,5 @@ func parseData(data [][]string) (domain.QuizCSV, error) {
 			}
 		}
 	}
-	//log.Info().Msgf("Quiz - Questions: %v", quizData.Question)
-	//log.Info().Msgf("Quiz - Answers: %v", quizData.Answer)
 	return quizData, nil
 }
