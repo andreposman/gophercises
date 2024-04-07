@@ -10,9 +10,16 @@ import (
 )
 
 func PrintName(number, name string) {
-	fmt.Println("--------------------------------------")
 	fmt.Printf("Gophercises | %v - %v \n", number, name)
-	fmt.Println("--------------------------------------")
+}
+
+func PrintLineDivider(size int) {
+	var line = ""
+	for i := 0; i <= size; i++ {
+		line = line + "-"
+	}
+
+	fmt.Println(line)
 }
 
 // ReadCSV The path is in relation to the main.go file in the root of the project.
